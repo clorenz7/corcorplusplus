@@ -44,13 +44,21 @@ Explanation: Possible partition [1,1],[2,2],[2,2].
 
 using namespace std;
 
+bool isCommonFactor(unordered_map<int, int>& counts, int div) {
+
+    for (auto it = counts.begin(); it != counts.end(); ++it) {
+        if ( (it->second % div) != 0 )
+            return false;
+    }
+
+    return true;
+}
+
 class Solution {
 public:
     bool hasGroupsSizeX(vector<int>& deck) {
 
         int partVal = INT_MAX;
-        bool retVal = false;
-        bool allDivisible = true;
         unordered_map<int, int> counts;
 
         // Put counts in to a hashmap
@@ -64,36 +72,20 @@ public:
         }
 
         // Check that it is 2 or greater
-        if (partVal < 2) 
+        if ( partVal < 2 ) 
             return false;
 
-        // Check if two is a divisor
-        for (auto it = counts.begin(); it != counts.end(); it++) {
-            if ( (it->second % 2) != 0 ) {
-                allDivisible = false;
-                break;
-            }
-        }
-        if ( allDivisible ) 
+        // Check if two is a divisor so we can skip even factors
+        if ( isCommonFactor(counts, 2) ) 
             return true;
 
         // Loop over odd prime factors of partVal
         for (int d = 3; d <= partVal; d += 2) {
-            allDivisible = true;
             // Make sure it is a factor
-            if ( (partVal % d) != 0) {
+            if ( (partVal % d) != 0) 
                 continue;
-            } 
-
-            // See that it factors all counts
-            for (auto it = counts.begin(); it != counts.end(); it++) {
-                if ( (it->second % d) != 0 ) {
-                    allDivisible = false;
-                    break;
-                }
-            }
-            // If all counts were divisible we are done
-            if ( allDivisible ) 
+            // If it is a common factor we are done
+            if ( isCommonFactor(counts, d) ) 
                 return true;
         }
         return false;
