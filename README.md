@@ -7,6 +7,7 @@ Learning / Practicing C++
 
 & is an address operator
 - This is distinct from reference when applied to types
+
 `*` is a dereference operator
 
 ```c++
