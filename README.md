@@ -7,7 +7,7 @@ Learning / Practicing C++
 
 & is an address operator
 - This is distinct from reference when applied to types
-* is a dereference operator
+`*` is a dereference operator
 
 ```c++
 // Pointer creation: space is irrelevant: ptr is a pointer, q is an int
