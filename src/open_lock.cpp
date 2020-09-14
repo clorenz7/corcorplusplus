@@ -52,8 +52,6 @@ Thoughts:
 #include<string>
 #include<vector>
 #include<queue>
-#include<unordered_set>
-
 using namespace std;
 
 class Solution {
@@ -62,20 +60,16 @@ public:
 
         int targ = stoi(target);
         int lockState[4] = {0};
-        int n_spins = 0;
-        int lockInt;
-        int origDial;
-        int factor; 
+        int n_spins, lockInt, origDial, factor, origInt, stateDelta;
         int visited[10000] = {0};
-        unordered_set<int> deadSet;
         queue<int> Q;
         Q.push(0);
 
         // Convert deadends to a set of ints
         for (auto it=deadends.begin(); it != deadends.end(); ++it) {
-            // deadSet.emplace(stoi(*it));
             visited[stoi(*it)] = -1;
         }
+
         if ( visited[0] == -1 )
             return -1;
         if ( target == "0000" ) {
@@ -93,36 +87,27 @@ public:
             lockState[1] = (lockInt % 1000)/100;
             lockState[0] = lockInt /1000;
 
+            factor = 1000;
+            origInt = lockInt;
+
             for (int i = 0; i < 4; ++i) {
                 origDial = lockState[i];
 
                 for (int j = -1; j <=1; j+=2) {
-                    lockState[i] = ((origDial + j+10) % 10);
-
-                    // cout << "Lock State: ";
-                    // for (int k = 0; k < 4; ++k) { 
-                    //     cout << lockState[k];
-                    // }
-                    // cout << endl;
-
-                    // This can be cleaned up by doing deltas rather than re summing each time. 
-                    lockInt = 1000*lockState[0] + 100*lockState[1] + 10*lockState[2] + lockState[3];
-
-                    // cout << "Lock Int: " << lockInt << endl;
+                    stateDelta = ((origDial + j+10) % 10) - origDial;
+                    lockInt = origInt + stateDelta*factor;
 
                     if ( visited[lockInt] == 0 ) {
                         if ( lockInt == targ ) {
                             return n_spins+1;
                         }
                         visited[lockInt] = (n_spins+1);
-                        // cout << "Pushing " << lockInt << endl; 
                         Q.push(lockInt);
                     }
                 }
-                lockState[i] = origDial;
+                factor /= 10;
             }
         }
-
         return -1;
     }
 };
